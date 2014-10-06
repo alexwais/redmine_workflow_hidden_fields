@@ -13,13 +13,12 @@ module RedmineWorkflowHiddenFields
     module InstanceMethods
 
       def available_filters_with_hidden
-        #unless @available_filters
-        #  initialize_available_filters
-        #  @available_filters.each do |field, options|
-        #    options[:name] ||= l(options[:label] || "field_#{field}".gsub(/_id$/, ''))
-        #  end
-        #end
-        @available_filters = available_filters_without_hidden
+        unless @available_filters
+          initialize_available_filters
+          @available_filters.each do |field, options|
+            options[:name] ||= l(options[:label] || "field_#{field}".gsub(/_id$/, ''))
+          end
+        end
         hidden_fields.each {|field|
           @available_filters.delete field
         }
