@@ -4,13 +4,14 @@ module RedmineWorkflowHiddenFields
       base.send(:include, InstanceMethods)
       base.class_eval do
         unloadable
+        alias_method_chain :visible_details, :hidden
       end
     end
 
     module InstanceMethods
 
       # Returns journal details that are visible to user
-      def visible_details(user=User.current)
+      def visible_details_with_hidden(user=User.current)
         details.select do |detail|
           if detail.property == 'attr'
             !issue.hidden_attribute?(detail.prop_key, user)
