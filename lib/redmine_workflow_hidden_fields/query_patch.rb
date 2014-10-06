@@ -4,37 +4,25 @@ module RedmineWorkflowHiddenFields
       base.send(:include, InstanceMethods)
       base.class_eval do
         unloadable
+        alias_method_chain :available_filters, :hidden
+        alias_method_chain :add_custom_field_filter, :hidden
       end
     end
 
+
     module InstanceMethods
 
-      def value(object)    
-        object.send name  
-        if object.respond_to?(:hidden_attribute_names)  
-          hidden_fields = object.hidden_attribute_names.map {|field| field.sub(/_id$/, '')}  
-          if hidden_fields.include?(name.to_s)  
-            ""
-          else  
-            object.send name  
-          end  
-        else  
-          object.send name  
-        end       
-      end
-
-      def available_filters
-        unless @available_filters
-          initialize_available_filters
-          @available_filters.each do |field, options|
-            options[:name] ||= l(options[:label] || "field_#{field}".gsub(/_id$/, ''))
-          end
-        end
-
+      def available_filters_with_hidden
+        #unless @available_filters
+        #  initialize_available_filters
+        #  @available_filters.each do |field, options|
+        #    options[:name] ||= l(options[:label] || "field_#{field}".gsub(/_id$/, ''))
+        #  end
+        #end
+        @available_filters = available_filters_without_hidden
         hidden_fields.each {|field|
           @available_filters.delete field
         }
-
         @available_filters
       end
 
@@ -61,25 +49,9 @@ module RedmineWorkflowHiddenFields
         return @hidden_fields 
       end
 
-      def add_custom_field_filter(field, assoc=nil)
+      def add_custom_field_filter_with_hidden(field, assoc=nil)
         unless hidden_fields.include?(field.id.to_s)
-          options = field.format.query_filter_options(field, self)
-          if field.format.target_class && field.format.target_class <= User
-            if options[:values].is_a?(Array) && User.current.logged?
-              options[:values].unshift ["<< #{l(:label_me)} >>", "me"]
-            end
-          end
-
-          filter_id = "cf_#{field.id}"
-          filter_name = field.name
-          if assoc.present?
-            filter_id = "#{assoc}.#{filter_id}"
-            filter_name = l("label_attribute_of_#{assoc}", :name => filter_name)
-          end
-          add_available_filter filter_id, options.merge({
-            :name => filter_name,
-            :field => field
-            })
+         add_custom_field_filter_without_hidden(field, assoc)
         end
       end
 

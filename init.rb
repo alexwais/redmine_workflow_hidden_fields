@@ -13,6 +13,7 @@ ActionDispatch::Callbacks.to_prepare do
   Project.send(:include, RedmineWorkflowHiddenFields::ProjectPatch)
   require_dependency 'query'
   Query.send(:include, RedmineWorkflowHiddenFields::QueryPatch)
+  QueryColumn.send(:include, RedmineWorkflowHiddenFields::QueryColumnPatch)
   require_dependency 'workflow_permission'
   WorkflowPermission.send(:include, RedmineWorkflowHiddenFields::WorkflowPermissionPatch)
   require_dependency 'workflows_helper'
