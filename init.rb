@@ -1,4 +1,5 @@
 require 'redmine'
+require 'pdf'
 
 ActionDispatch::Callbacks.to_prepare do
   require_dependency 'issue'
@@ -19,9 +20,6 @@ ActionDispatch::Callbacks.to_prepare do
   require_dependency 'workflows_helper'
   WorkflowsHelper.send(:include, RedmineWorkflowHiddenFields::WorkflowsHelperPatch)
 end
-
-
-
 
 Redmine::Plugin.register :redmine_workflow_hidden_fields do
   requires_redmine :version_or_higher => '2.5.2'
