@@ -6,6 +6,7 @@ module RedmineWorkflowHiddenFields
         unloadable
         #alias_method_chain :initialize_available_filters, :hidden
         alias_method_chain :available_columns, :hidden
+        alias_method_chain :available_filters, :hidden
       end
     end
 
@@ -34,8 +35,19 @@ module RedmineWorkflowHiddenFields
           @available_columns
       end
 
-
-
+        def available_filters_with_hidden
+          @available_filters = available_filters_without_hidden
+          hidden_fields.each {|field|
+            delete_available_filter field
+            if field == "assigned_to_id" then
+              delete_available_filter "assigned_to_role"
+            end
+            if field == "assigned_to_id" then
+              delete_available_filter "member_of_group"
+            end
+          }
+          @available_filters
+        end
 
     end
   end
