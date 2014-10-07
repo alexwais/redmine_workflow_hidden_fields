@@ -4,6 +4,7 @@ module RedmineWorkflowHiddenFields
       base.send(:include, InstanceMethods)
       base.class_eval do
         unloadable
+        alias_method_chain :safe_attribute_names, :hidden
       end
     end
 
@@ -58,6 +59,12 @@ module RedmineWorkflowHiddenFields
             yield(group)
           end
         end 
+      end
+
+      def safe_attribute_names_with_hidden(user=nil)
+        names = safe_attribute_names_without_hidden
+        names -= hidden_attribute_names(user)
+        names
       end
 
     end
