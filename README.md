@@ -22,14 +22,6 @@ The plugin was developed and tested with Redmine version 2.5.2.
 
 - Put the plugin folder into your Redmine's /plugin directory.
 
-- Edit the file /app/models/workflow_permission.rb inside your Redmine installation:
-
-Change line 19 from 
-`validates_inclusion_of :rule, :in => %w(readonly required)`
-to
-`validates_inclusion_of :rule, :in => %w(readonly required hidden)`
-and save that file.
-
 - Restart your Redmine.
 
 
