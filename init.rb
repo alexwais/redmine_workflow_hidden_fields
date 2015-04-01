@@ -1,5 +1,4 @@
 require 'redmine'
-require 'pdf'
 
 ActionDispatch::Callbacks.to_prepare do
   require_dependency 'issue'
@@ -15,19 +14,22 @@ ActionDispatch::Callbacks.to_prepare do
   require_dependency 'query'
   Query.send(:include, RedmineWorkflowHiddenFields::QueryPatch)
   QueryColumn.send(:include, RedmineWorkflowHiddenFields::QueryColumnPatch)
+  QueryCustomFieldColumn.send(:include, RedmineWorkflowHiddenFields::QueryCustomFieldColumnPatch)
   require_dependency 'workflow_permission'
   WorkflowPermission.send(:include, RedmineWorkflowHiddenFields::WorkflowPermissionPatch)
   require_dependency 'workflows_helper'
   WorkflowsHelper.send(:include, RedmineWorkflowHiddenFields::WorkflowsHelperPatch)
+  require_dependency 'redmine/export/pdf/issues_pdf_helper'
+  Redmine::Export::PDF::IssuesPdfHelper.send(:include, RedmineWorkflowHiddenFields::IssuesPdfHelperPatch)
 end
 
 Redmine::Plugin.register :redmine_workflow_hidden_fields do
-  requires_redmine :version_or_higher => '2.5.2'
+  requires_redmine :version_or_higher => '3.0.1'
 
   name 'Redmine Workflow Hidden Fields plugin'
-  author 'Alexander Wais, et al.'
+  author 'Alexander Wais, David Robinson, et al.'
   description "Provides a 'hidden' issue field permission for workflows"
-  version '0.1.2'
+  version '0.2.0'
   url 'https://github.com/alexwais/redmine_workflow_hidden_fields'
   author_url 'http://www.redmine.org/issues/12005'
 end
