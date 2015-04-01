@@ -15,14 +15,14 @@ Corresponding issue on redmine.org: [#12005](http://www.redmine.org/issues/12005
 
 ###Compatibility
 
-The plugin was developed and tested with Redmine version 2.5.2.
+The plugin was developed and tested with Redmine version 2.6.
 
 
 ###Installation
 
 - Put the plugin folder into your Redmine's /plugin directory.
 
-- Restart your Redmine.
+- Restart Redmine.
 
 
 ###License
