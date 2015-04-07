@@ -10,7 +10,7 @@ module RedmineWorkflowHiddenFields
 
     module InstanceMethods
 
-      def value_with_hidden(object)    
+      def value_with_hidden(object)   
         object.send name  
         if object.respond_to?(:hidden_attribute_names)  
           hidden_fields = object.hidden_attribute_names.map {|field| field.sub(/_id$/, '')}  

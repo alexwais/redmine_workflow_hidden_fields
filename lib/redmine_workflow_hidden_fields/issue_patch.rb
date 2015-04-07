@@ -5,12 +5,15 @@ module RedmineWorkflowHiddenFields
       base.class_eval do
         unloadable
         alias_method_chain :safe_attribute_names, :hidden
+        alias_method_chain :visible_custom_field_values, :hidden
+        alias_method_chain :read_only_attribute_names, :hidden
+        alias_method_chain :each_notification, :hidden
       end
     end
 
     module InstanceMethods
 
-      def visible_custom_field_values(user=nil)
+      def visible_custom_field_values_with_hidden(user=nil)
         user_real = user || User.current
         fields = custom_field_values.select do |value|
           value.custom_field.visible_by?(project, user_real) 
@@ -29,7 +32,7 @@ module RedmineWorkflowHiddenFields
       end 
 
 
-      def read_only_attribute_names(user=nil)
+      def read_only_attribute_names_with_hidden(user=nil)
         workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'readonly' and rule != 'hidden'}.keys
       end
 
@@ -46,7 +49,7 @@ module RedmineWorkflowHiddenFields
       end  
 
 
-      def each_notification(users, &block)
+      def each_notification_with_hidden(users, &block)
         if users.any?
          variations = users.collect {
           |user| (hidden_attribute_names(user) + (custom_field_values - visible_custom_field_values(user))).uniq

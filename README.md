@@ -22,7 +22,7 @@ The plugin was developed and tested with Redmine version 2.5.2.
 
 - Put the plugin folder into your Redmine's /plugin directory.
 
-- Restart your Redmine.
+- Restart Redmine.
 
 
 ###License
