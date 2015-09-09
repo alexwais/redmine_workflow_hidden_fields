@@ -16,7 +16,7 @@ module RedmineWorkflowHiddenFields
 			def visible_custom_field_values_with_hidden(user=nil)
 				user_real = user || User.current
 				fields = custom_field_values.select do |value|
-					value.custom_field.visible_by?(project, user_real) 
+					value.custom_field.visible_by?(project, user_real)
 				end
 				fields = fields & viewable_custom_field_values(user_real)
 				fields
@@ -29,7 +29,7 @@ module RedmineWorkflowHiddenFields
 				custom_field_values.reject do |value|
 					hidden_attribute_names(user).include?(value.custom_field_id.to_s)
 				end
-			end 
+			end
 
 
 			def read_only_attribute_names_with_hidden(user=nil)
@@ -39,14 +39,14 @@ module RedmineWorkflowHiddenFields
 
 			# Same as above, but for hidden fields
 			def hidden_attribute_names(user=nil)
-				workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'hidden'}.keys
+				@hidden_attribute_names ||= {}
+				@hidden_attribute_names[user || :nil] ||= workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'hidden'}.keys
 			end
-
 
 			# Returns true if the attribute should be hidden for user
 			def hidden_attribute?(name, user=nil)
 				hidden_attribute_names(user).include?(name.to_s)
-			end  
+			end
 
 
 			def each_notification_with_hidden(users, &block)
@@ -62,7 +62,7 @@ module RedmineWorkflowHiddenFields
 					recipient_groups.each do |group|
 						yield(group)
 					end
-				end 
+				end
 			end
 
 			def safe_attribute_names_with_hidden(user=nil)
