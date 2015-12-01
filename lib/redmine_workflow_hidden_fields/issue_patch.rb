@@ -15,9 +15,7 @@ module RedmineWorkflowHiddenFields
 
 			def visible_custom_field_values_with_hidden(user=nil)
 				user_real = user || User.current
-				fields = custom_field_values.select do |value|
-					value.custom_field.visible_by?(project, user_real)
-				end
+				fields = visible_custom_field_values_without_hidden(user)
 				fields = fields & viewable_custom_field_values(user_real)
 				fields
 			end
@@ -33,7 +31,8 @@ module RedmineWorkflowHiddenFields
 
 
 			def read_only_attribute_names_with_hidden(user=nil)
-				workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'readonly' and rule !='hidden'}.keys
+				attribute_names = read_only_attribute_names_without_hidden(user)
+				attribute_names | workflow_rule_by_attribute(user).reject {|attr, rule| rule !='hidden'}.keys
 			end
 
 
