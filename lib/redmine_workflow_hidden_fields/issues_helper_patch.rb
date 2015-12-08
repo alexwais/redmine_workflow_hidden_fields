@@ -29,7 +29,7 @@ module RedmineWorkflowHiddenFields
         strings = []
         values_by_field = {}
         details.each do |detail|
-          unless (detail.property == 'cf' || detail.property == 'attr') &&  detail.journal.issue.hidden_attribute?(detail.prop_key, options[:user])
+          unless (detail.property == 'cf' || detail.property == 'attr') && !detail.journal.nil? && detail.journal.issue.hidden_attribute?(detail.prop_key, options[:user])
             if detail.property == 'cf'
               field = detail.custom_field
               if field && field.multiple?
@@ -48,7 +48,7 @@ module RedmineWorkflowHiddenFields
         end
         values_by_field.each do |field, changes|
           detail = JournalDetail.new(:property => 'cf', :prop_key => field.id.to_s)
-          unless detail.journal.issue.hidden_attribute?(detail.prop_key, options[:user])
+          unless !detail.journal.nil? && detail.journal.issue.hidden_attribute?(detail.prop_key, options[:user])
             detail.instance_variable_set "@custom_field", field
             if changes[:added].any?
               detail.value = changes[:added]
