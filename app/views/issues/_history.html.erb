@@ -8,17 +8,23 @@
 			<%= authoring journal.created_on, journal.user, :label => :label_updated_time_by %>
 			<%= content_tag('span', l(:field_is_private), :class => 'private') if journal.private_notes? %></h4>
 
-			<% if journal.details.any? %>
-				<ul class="details">
-					<% details_to_strings(journal.visible_details).each do |string| %>
-					 <li><%= string %></li>
-					<% end %>
-				</ul>
-			<% end %>
-			<%= render_notes(issue, journal, :reply_links => reply_links) unless journal.notes.blank? %>
-			</div>
-		</div>
-		<%= call_hook(:view_issues_history_journal_bottom, { :journal => journal }) %>
-	<% end %>
+    <% if journal.details.any? %>
+    <ul class="details">
+      <% details_to_strings(journal.visible_details).each do |string| %>
+       <li><%= string %></li>
+      <% end %>
+    </ul>
+    <% if Setting.thumbnails_enabled? && (thumbnail_attachments = journal_thumbnail_attachments(journal)).any? %>
+      <div class="thumbnails">
+        <% thumbnail_attachments.each do |attachment| %>
+          <div><%= thumbnail_tag(attachment) %></div>
+        <% end %>
+      </div>
+    <% end %>
+    <% end %>
+    <%= render_notes(issue, journal, :reply_links => reply_links) unless journal.notes.blank? %>
+    </div>
+  </div>
+  <%= call_hook(:view_issues_history_journal_bottom, { :journal => journal }) %>
 <% end %>
 <% heads_for_wiki_formatter if User.current.allowed_to?(:edit_issue_notes, issue.project) || User.current.allowed_to?(:edit_own_issue_notes, issue.project) %>
