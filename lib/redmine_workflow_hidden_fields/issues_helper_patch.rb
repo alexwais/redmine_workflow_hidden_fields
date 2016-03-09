@@ -18,7 +18,7 @@ module RedmineWorkflowHiddenFields
 						items << "#{l("field_#{attribute}")}: #{issue.send attribute}"
 					end
 				end
-				issue.visible_custom_field_values(user).each do |value|
+				issue.visible_custom_field_values(user).reject { |value| value.custom_field.field_format == 'label' || value.custom_field.field_format == 'grid' }.each do |value|
 					items << "#{value.custom_field.name}: #{show_value(value, false)}"
 				end
 				items
