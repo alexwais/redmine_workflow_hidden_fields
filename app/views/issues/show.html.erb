@@ -33,7 +33,7 @@
         <% end %>
         </p>
 
-<table class="attributes">
+<div class="attributes">
 <%= issue_fields_rows do |rows|  
   i = 0
   unless @issue.hidden_attribute?('status')
@@ -120,7 +120,7 @@
 end %>
 <%= render_custom_fields_rows(@issue) %>
 <%= call_hook(:view_issues_show_details_bottom, :issue => @issue) %>
-</table>
+</div>
 
 <% if @issue.description? || @issue.attachments.any? -%>
 <hr />
