@@ -8,6 +8,9 @@ module RedmineWorkflowHiddenFields
 				alias_method_chain :visible_custom_field_values, :hidden
 				alias_method_chain :read_only_attribute_names, :hidden
 				alias_method_chain :each_notification, :hidden
+
+				alias_method_chain :tracker=, :hidden
+				alias_method_chain :status=, :hidden
 			end
 		end
 
@@ -15,9 +18,7 @@ module RedmineWorkflowHiddenFields
 
 			def visible_custom_field_values_with_hidden(user=nil)
 				user_real = user || User.current
-				fields = custom_field_values.select do |value|
-					value.custom_field.visible_by?(project, user_real)
-				end
+				fields = visible_custom_field_values_without_hidden(user)
 				fields = fields & viewable_custom_field_values(user_real)
 				fields
 			end
@@ -33,7 +34,8 @@ module RedmineWorkflowHiddenFields
 
 
 			def read_only_attribute_names_with_hidden(user=nil)
-				workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'readonly' and rule !='hidden'}.keys
+				attribute_names = read_only_attribute_names_without_hidden(user)
+				attribute_names | workflow_rule_by_attribute(user).reject {|attr, rule| rule !='hidden'}.keys
 			end
 
 
@@ -42,6 +44,17 @@ module RedmineWorkflowHiddenFields
 				@hidden_attribute_names ||= {}
 				@hidden_attribute_names[user || :nil] ||= workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'hidden'}.keys
 			end
+
+			def tracker_with_hidden= (new_tracker)
+				@hidden_attribute_names = {} if self.tracker != new_tracker
+				self.tracker_without_hidden = new_tracker
+			end
+
+			def status_with_hidden= (new_status)
+				@hidden_attribute_names = {} if self.status != new_status
+				self.status_without_hidden = new_status
+			end
+
 
 			# Returns true if the attribute should be hidden for user
 			def hidden_attribute?(name, user=nil)
