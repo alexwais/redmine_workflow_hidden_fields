@@ -11,14 +11,14 @@ module RedmineWorkflowHiddenFields
 		module InstanceMethods
 			# Returns journal details that are visible to user
 			def visible_details_with_hidden(user=User.current)
-				dets = visible_details_without_hidden(user)				
+				dets = visible_details_without_hidden(user)
 				dets.select do |detail|
 					if detail.property == 'attr' or detail.property == 'cf'
 						!issue.hidden_attribute?(detail.prop_key, user)
 					else
 						true
 					end
-                end						
+        end
 			end
 		end
 	end
