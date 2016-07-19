@@ -15,7 +15,7 @@ module RedmineWorkflowHiddenFields
 
 				result = []
 				unless roles.empty?
-					workflow_permissions = WorkflowPermission.where(:tracker_id => trackers.map(&:id), :old_status_id => IssueStatus.all.map(&:id), :role_id => roles.map(&:id), :rule => 'hidden').all
+					workflow_permissions = WorkflowPermission.where(:tracker_id => trackers.map(&:id), :old_status_id => IssueStatus.all.select(:id), :role_id => roles.map(&:id), :rule => 'hidden').all
 					if workflow_permissions.any?
 						workflow_rules = workflow_permissions.inject({}) do |hash, permission|
 							hash[permission.field_name] ||= []
@@ -23,12 +23,12 @@ module RedmineWorkflowHiddenFields
 							hash
 						end
 						workflow_rules.each do |attr, rules|
-							result << attr if rules.size >= (roles.size * trackers.size * IssueStatus.all.size)
+							result << attr if rules.size >= (roles.size * trackers.size * IssueStatus.all.count)
 						end
 					end
 				else
 					result = Tracker.core_fields(trackers)
-					result << self.all_issue_custom_fields.map {|field| field.id.to_s}
+					result << self.all_issue_custom_fields.pluck(:id).map {|id| id.to_s}
 				end
 
 
