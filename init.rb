@@ -24,12 +24,12 @@ ActionDispatch::Callbacks.to_prepare do
 end
 
 Redmine::Plugin.register :redmine_workflow_hidden_fields do
-  requires_redmine :version_or_higher => '3.0.1'
+  requires_redmine :version_or_higher => '3.2.0'
 
   name 'Redmine Workflow Hidden Fields plugin'
   author 'Alexander Wais, David Robinson, et al.'
   description "Provides a 'hidden' issue field permission for workflows"
-  version '0.2.0'
+  version '0.3.0'
   url 'https://github.com/alexwais/redmine_workflow_hidden_fields'
   author_url 'http://www.redmine.org/issues/12005'
 end
