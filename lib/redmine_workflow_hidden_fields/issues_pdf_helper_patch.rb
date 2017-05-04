@@ -15,7 +15,7 @@ module RedmineWorkflowHiddenFields
 				pdf = Redmine::Export::PDF::ITCPDF.new(current_language)
 				pdf.set_title("#{issue.project} - #{issue.tracker} ##{issue.id}")
 				pdf.alias_nb_pages
-				pdf.footer_date = format_date(Date.today)
+				pdf.footer_date = format_date(User.current.today)
 				pdf.add_page
 				pdf.SetFontStyle('B',11)
 				buf = "#{issue.project} - #{issue.tracker} ##{issue.id}"
