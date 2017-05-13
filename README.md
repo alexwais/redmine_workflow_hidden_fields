@@ -6,7 +6,7 @@ This plugin adds a new 'Hidden' permission to the existing 'Read-only' and 'Requ
 Corresponding issue on redmine.org: [#12005](http://www.redmine.org/issues/12005)
 
 
-###Features
+### Features
 
 - Configure hidden fields in workflows, thus per status and roles.
 
@@ -15,19 +15,19 @@ Corresponding issue on redmine.org: [#12005](http://www.redmine.org/issues/12005
 - Completely hidden fields (fields that are configured to not be visible anywhere for the user) are removed from available columns & filters.
 
 
-###Compatibility
+### Compatibility
 
 The plugin was developed and tested with Redmine version 3.3.3-stable.
 
 
-###Installation
+### Installation
 
 - Put the plugin folder into your Redmine's /plugin directory.
 
 - Restart your Redmine.
 
 
-###License
+### License
 
 GNU General Public License Version 2
 
