@@ -14,14 +14,14 @@ module RedmineWorkflowHiddenFields
 			def email_issue_attributes_with_hidden(issue, user)
 				items = []
 				%w(author status priority assigned_to category fixed_version).each do |attribute|
-					unless issue.disabled_core_fields.include?(attribute+"_id") or issue.hidden_attribute_names(user).include?(attribute+"_id")
-						items << "#{l("field_#{attribute}")}: #{issue.send attribute}"
-					end
+				  unless issue.disabled_core_fields.include?(attribute+"_id") or issue.hidden_attribute_names(user).include?(attribute+"_id")
+					items << "#{l("field_#{attribute}")}: #{issue.send attribute}"
+				  end
 				end
-				issue.visible_custom_field_values(user).reject { |value| value.custom_field.field_format == 'label' || value.custom_field.field_format == 'grid' }.each do |value|
-					items << "#{value.custom_field.name}: #{show_value(value, false)}"
+				issue.visible_custom_field_values(user).each do |value|
+				  items << "#{value.custom_field.name}: #{show_value(value, false)}"
 				end
-				items
+				items				
 			end
 
 			def details_to_strings_with_hidden(details, no_html=false, options={})	
