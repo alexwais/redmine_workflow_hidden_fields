@@ -24,7 +24,7 @@ ActionDispatch::Callbacks.to_prepare do
 end
 
 Redmine::Plugin.register :redmine_workflow_hidden_fields do
-  requires_redmine :version_or_higher => '3.3.3'
+  requires_redmine :version_or_higher => '3.3.1'
 
   name 'Redmine Workflow Hidden Fields plugin'
   author 'Alexander Wais, David Robinson, et al.'
