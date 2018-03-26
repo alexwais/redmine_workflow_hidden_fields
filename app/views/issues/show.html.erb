@@ -11,7 +11,11 @@
                      :title => "##{@prev_issue_id}",
                      :accesskey => accesskey(:previous) %> |
       <% if @issue_position && @issue_count %>
-        <span class="position"><%= l(:label_item_position, :position => @issue_position, :count => @issue_count) %></span> |
+        <span class="position">
+          <%= link_to_if @query_path,
+                         l(:label_item_position, :position => @issue_position, :count => @issue_count),
+                         @query_path %>
+        </span> |
       <% end %>
       <%= link_to_if @next_issue_id,
                      "#{l(:label_next)} \xc2\xbb",
@@ -21,7 +25,10 @@
     </div>
   <% end %>
 
-  <%= avatar(@issue.author, :size => "50") %>
+  <div class="gravatar-with-child">
+    <%= avatar(@issue.author, :size => "50", :title => l(:field_author)) %>
+    <%= avatar(@issue.assigned_to, :size => "22", :class => "gravatar gravatar-child", :title => l(:field_assigned_to)) if @issue.assigned_to %>
+  </div>
 
 <div class="subject">
 <%= render_issue_subject_with_tree(@issue) %>
@@ -37,38 +44,38 @@
 <%= issue_fields_rows do |rows|  
   i = 0
   unless @issue.hidden_attribute?('status')
-	rows.left l(:field_status), h(@issue.status.name), :class => 'status'
+  rows.left l(:field_status), @issue.status.name, :class => 'status'
 	i += 1
   end
   
   unless @issue.hidden_attribute?('priority_id')
     if i % 2 == 0
-      rows.left l(:field_priority), h(@issue.priority.name), :class => 'priority'
+  rows.left l(:field_priority), @issue.priority.name, :class => 'priority'
 	else
-	  rows.right l(:field_priority), h(@issue.priority.name), :class => 'priority'
+	  rows.right l(:field_priority), @issue.priority.name, :class => 'priority'
 	end
 	i += 1
   end
   unless @issue.disabled_core_fields.include?('assigned_to_id') || @issue.hidden_attribute?('assigned_to_id')
     if i % 2 == 0
-      rows.left l(:field_assigned_to), avatar(@issue.assigned_to, :size => "14").to_s.html_safe + (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
-	else
-	  rows.right l(:field_assigned_to), avatar(@issue.assigned_to, :size => "14").to_s.html_safe + (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
-	end
-	i += 1
+    rows.left l(:field_assigned_to), (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+    else
+    rows.right l(:field_assigned_to), (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+    end
+    i += 1
   end
   
-  unless @issue.disabled_core_fields.include?('category_id') || @issue.hidden_attribute?('category_id')
+  unless @issue.disabled_core_fields.include?('category_id') || (@issue.category.nil? && @issue.project.issue_categories.none?) || @issue.hidden_attribute?('category_id')
     if i % 2 == 0
-		rows.left l(:field_category), h(@issue.category ? @issue.category.name : "-"), :class => 'category'
+    rows.left l(:field_category), (@issue.category ? @issue.category.name : "-"), :class => 'category'
 	else
-		rows.right l(:field_category), h(@issue.category ? @issue.category.name : "-"), :class => 'category'
+		rows.right l(:field_category), (@issue.category ? @issue.category.name : "-"), :class => 'category'
 	end
 	i += 1
   end
-  unless @issue.disabled_core_fields.include?('fixed_version_id') || @issue.hidden_attribute?('fixed_version_id')
+  unless @issue.disabled_core_fields.include?('fixed_version_id') || (@issue.fixed_version.nil? && @issue.assignable_versions.none?) || @issue.hidden_attribute?('fixed_version_id')
 	if i % 2 == 0
-		rows.left l(:field_fixed_version), (@issue.fixed_version ? link_to_version(@issue.fixed_version) : "-"), :class => 'fixed-version'
+    rows.left l(:field_fixed_version), (@issue.fixed_version ? link_to_version(@issue.fixed_version) : "-"), :class => 'fixed-version'
 	else
 		rows.right l(:field_fixed_version), (@issue.fixed_version ? link_to_version(@issue.fixed_version) : "-"), :class => 'fixed-version'
 	end
@@ -77,9 +84,9 @@
 
   unless @issue.disabled_core_fields.include?('start_date') || @issue.hidden_attribute?('start_date')
     if i % 2 == 0
-      rows.left l(:field_start_date), format_date(@issue.start_date), :class => 'start-date'
+    rows.left l(:field_start_date), format_date(@issue.start_date), :class => 'start-date'
 	else
-	  rows.right l(:field_start_date), format_date(@issue.start_date), :class => 'start-date'
+    rows.right l(:field_start_date), format_date(@issue.start_date), :class => 'start-date'
 	end
 	i += 1
   end
@@ -87,38 +94,37 @@
     if i % 2 == 0
       rows.left l(:field_due_date), format_date(@issue.due_date), :class => 'due-date'
 	else
-	  rows.right l(:field_due_date), format_date(@issue.due_date), :class => 'due-date'
+    rows.right l(:field_due_date), format_date(@issue.due_date), :class => 'due-date'
 	end
 	i += 1
   end
   unless @issue.disabled_core_fields.include?('done_ratio') || @issue.hidden_attribute?('done_ratio')
     if i % 2 == 0
-      rows.left l(:field_done_ratio), progress_bar(@issue.done_ratio, :width => '80px', :legend => "#{@issue.done_ratio}%"), :class => 'progress'
+      rows.left l(:field_done_ratio), progress_bar(@issue.done_ratio, :legend => "#{@issue.done_ratio}%"), :class => 'progress'
 	else
-	  rows.right l(:field_done_ratio), progress_bar(@issue.done_ratio, :width => '80px', :legend => "#{@issue.done_ratio}%"), :class => 'progress'
+    rows.right l(:field_done_ratio), progress_bar(@issue.done_ratio, :legend => "#{@issue.done_ratio}%"), :class => 'progress'
 	end
 	i += 1
   end
-  
   unless @issue.disabled_core_fields.include?('estimated_hours') || @issue.hidden_attribute?('estimated_hours')
-    unless @issue.estimated_hours.nil?
-	  if i % 2 == 0
-        rows.left l(:field_estimated_hours), l_hours(@issue.estimated_hours), :class => 'estimated-hours'
-	  else
-	    rows.right l(:field_estimated_hours), l_hours(@issue.estimated_hours), :class => 'estimated-hours'
-	  end
-	  i += 1
-    end
-  end
-  if User.current.allowed_to?(:view_time_entries, @project)
     if i % 2 == 0
-      rows.left l(:label_spent_time), (@issue.total_spent_hours > 0 ? link_to(l_hours(@issue.total_spent_hours), issue_time_entries_path(@issue)) : "-"), :class => 'spent-time'
+      rows.left l(:field_estimated_hours), issue_estimated_hours_details(@issue), :class => 'estimated-hours'
 	else
-	  rows.right l(:label_spent_time), (@issue.total_spent_hours > 0 ? link_to(l_hours(@issue.total_spent_hours), issue_time_entries_path(@issue)) : "-"), :class => 'spent-time'
-	end	
+      rows.right l(:field_estimated_hours), issue_estimated_hours_details(@issue), :class => 'estimated-hours'
+    end
+    i += 1
+  end
+  if User.current.allowed_to?(:view_time_entries, @project) && @issue.total_spent_hours > 0
+    if @issue.total_spent_hours > 0
+        if i % 2 == 0
+      rows.left l(:label_spent_time), issue_spent_hours_details(@issue), :class => 'spent-time'
+	else
+      rows.right l(:label_spent_time), issue_spent_hours_details(@issue), :class => 'spent-time'
+	end
+    end	
   end
 end %>
-<%= render_full_width_custom_fields_rows(@issue) %>
+<%= render_half_width_custom_fields_rows(@issue) %>
 <%= call_hook(:view_issues_show_details_bottom, :issue => @issue) %>
 </div>
 
@@ -139,6 +145,8 @@ end %>
 <%= link_to_attachments @issue, :thumbnails => true %>
 <% end -%>
 
+<%= render_full_width_custom_fields_rows(@issue) %>
+
 <%= call_hook(:view_issues_show_description_bottom, :issue => @issue) %>
 
 <% if !@issue.leaf? || User.current.allowed_to?(:manage_subtasks, @project) %>
@@ -148,7 +156,9 @@ end %>
   <%= link_to_new_subtask(@issue) if User.current.allowed_to?(:manage_subtasks, @project) %>
 </div>
 <p><strong><%=l(:label_subtask_plural)%></strong></p>
+<%= form_tag({}, :data => {:cm_url => issues_context_menu_path}) do %>
 <%= render_descendants_tree(@issue) unless @issue.leaf? %>
+<% end %>
 </div>
 <% end %>
 
