@@ -140,9 +140,9 @@ module RedmineWorkflowHiddenFields
 										truncate(truncate_length)
 						level = 10 if level >= 10
 						pdf.SetFontStyle('',8)
-						pdf.RDMCell(35+135,5, (level >=1 ? "  " * level : "") + buf, border_first)
+						pdf.RDMCell(35+155-50,5, (level >=1 ? "  " * level : "") + buf, border_first)
 						pdf.SetFontStyle('B',8)
-						pdf.RDMCell(20,5, child.status.to_s, border_last)
+						pdf.RDMCell(50,5, child.status.to_s, border_last)
 						pdf.ln
 					end
 				end
