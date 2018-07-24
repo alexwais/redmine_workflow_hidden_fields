@@ -69,9 +69,15 @@ module RedmineWorkflowHiddenFields
 					right << nil
 				end
 
+				big_cf = []
+
 				half = (issue.visible_custom_field_values.size / 2.0).ceil
 				issue.visible_custom_field_values.each_with_index do |custom_value, i|
-					(i < half ? left : right) << [custom_value.custom_field.name, show_value(custom_value, false)]
+					if custom_value.custom_field.big_size && custom_value.custom_field.field_format != 'label'
+						big_cf << [custom_value.custom_field.name, show_value(custom_value, false)]
+					else
+						(i < half ? left : right) << [custom_value.custom_field.name, show_value(custom_value, false)]
+					end
 				end
 
 				if pdf.get_rtl
@@ -114,6 +120,14 @@ module RedmineWorkflowHiddenFields
 					pdf.RDMMultiCell(60, height, item ? item.last.to_s : "", (i == 0 ? border_last_top : border_last), '', 0, 2)
 
 					pdf.set_x(base_x)
+				end
+
+				big_cf.each do |row|
+					pdf.SetFontStyle('B',9)
+					pdf.RDMCell(35+155, 5, row.first, "LRT", 1)
+					pdf.SetFontStyle('',9)
+
+					pdf.RDMwriteHTMLCell(35+155, 5, '', '', row.last.to_s, [], "LRB")
 				end
 
 				pdf.SetFontStyle('B',9)
