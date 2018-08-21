@@ -19,6 +19,11 @@ Corresponding issue on redmine.org: [#12005](http://www.redmine.org/issues/12005
 
 The plugin was developed and tested with Redmine version 3.2.0.
 
+For using with version 2.6.5:
+
+- Use branch 2.6.5.
+
+- Copy the directory **pdf/** located on **util/** to the path **<redmine_root_path>/lib/redmine/export/** 
 
 ###Installation
 
