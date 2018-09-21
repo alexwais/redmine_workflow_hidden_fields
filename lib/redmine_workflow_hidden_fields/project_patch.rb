@@ -15,7 +15,7 @@ module RedmineWorkflowHiddenFields
 
 				result = []
 				unless roles.empty?
-					workflow_permissions = WorkflowPermission.where(:tracker_id => trackers.map(&:id), :old_status_id => IssueStatus.all.select(:id), :role_id => roles.map(&:id), :rule => 'hidden').all
+					workflow_permissions = WorkflowPermission.where(:tracker_id => trackers.map(&:id), :old_status_id => IssueStatus.select(:id), :role_id => roles.map(&:id), :rule => 'hidden').all
 					if workflow_permissions.any?
 						workflow_rules = workflow_permissions.inject({}) do |hash, permission|
 							hash[permission.field_name] ||= []
