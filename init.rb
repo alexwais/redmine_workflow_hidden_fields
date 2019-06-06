@@ -1,6 +1,6 @@
 require 'redmine'
 
-ActionDispatch::Callbacks.to_prepare do
+ActiveSupport::Reloader.to_prepare do
   require_dependency 'issue'
   Issue.send(:prepend, RedmineWorkflowHiddenFields::IssuePatch)
   require_dependency 'issue_query'
