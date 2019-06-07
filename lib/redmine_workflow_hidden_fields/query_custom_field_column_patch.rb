@@ -20,7 +20,7 @@ module RedmineWorkflowHiddenFields
 			
 			def value_object_with_hidden(object)												
 				if custom_field.visible_by?(object.project, User.current) and visible?(object)
-					cv = object.custom_values.select {|v| v.custom_field_id == @cf.id}
+					cv = object.custom_values.select {|v| v.custom_field_id == @cf.id}.uniq
 					cv.size > 1 ? cv.sort {|a,b| a.value.to_s <=> b.value.to_s} : cv.first
 				else
 					nil
