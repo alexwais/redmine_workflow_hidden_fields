@@ -1,26 +1,26 @@
 require 'redmine'
 
-ActionDispatch::Callbacks.to_prepare do
+ActiveSupport::Reloader.to_prepare do
   require_dependency 'issue'
-  Issue.send(:include, RedmineWorkflowHiddenFields::IssuePatch)
+  Issue.send(:prepend, RedmineWorkflowHiddenFields::IssuePatch)
   require_dependency 'issue_query'
-  IssueQuery.send(:include, RedmineWorkflowHiddenFields::IssueQueryPatch)
+  IssueQuery.send(:prepend, RedmineWorkflowHiddenFields::IssueQueryPatch)
   require_dependency 'issues_helper'
-  IssuesHelper.send(:include, RedmineWorkflowHiddenFields::IssuesHelperPatch)
+  IssuesHelper.send(:prepend, RedmineWorkflowHiddenFields::IssuesHelperPatch)
   require_dependency 'journal'
-  Journal.send(:include, RedmineWorkflowHiddenFields::JournalPatch)
+  Journal.send(:prepend, RedmineWorkflowHiddenFields::JournalPatch)
   require_dependency 'project'
-  Project.send(:include, RedmineWorkflowHiddenFields::ProjectPatch)
+  Project.send(:prepend, RedmineWorkflowHiddenFields::ProjectPatch)
   require_dependency 'query'
-  Query.send(:include, RedmineWorkflowHiddenFields::QueryPatch)
-  QueryColumn.send(:include, RedmineWorkflowHiddenFields::QueryColumnPatch)
-  QueryCustomFieldColumn.send(:include, RedmineWorkflowHiddenFields::QueryCustomFieldColumnPatch)
+  Query.send(:prepend, RedmineWorkflowHiddenFields::QueryPatch)
+  QueryColumn.send(:prepend, RedmineWorkflowHiddenFields::QueryColumnPatch)
+  QueryCustomFieldColumn.send(:prepend, RedmineWorkflowHiddenFields::QueryCustomFieldColumnPatch)
   require_dependency 'workflow_permission'
   WorkflowPermission.send(:include, RedmineWorkflowHiddenFields::WorkflowPermissionPatch)
   require_dependency 'workflows_helper'
-  WorkflowsHelper.send(:include, RedmineWorkflowHiddenFields::WorkflowsHelperPatch)
+  WorkflowsHelper.send(:prepend, RedmineWorkflowHiddenFields::WorkflowsHelperPatch)
   require_dependency 'redmine/export/pdf/issues_pdf_helper'
-  Redmine::Export::PDF::IssuesPdfHelper.send(:include, RedmineWorkflowHiddenFields::IssuesPdfHelperPatch)
+  Redmine::Export::PDF::IssuesPdfHelper.send(:prepend, RedmineWorkflowHiddenFields::IssuesPdfHelperPatch)
 end
 
 Redmine::Plugin.register :redmine_workflow_hidden_fields do

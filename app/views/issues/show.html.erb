@@ -128,9 +128,8 @@ end %>
 <%= call_hook(:view_issues_show_details_bottom, :issue => @issue) %>
 </div>
 
-<% if @issue.description? || @issue.attachments.any? -%>
-<hr />
 <% if @issue.description? %>
+<hr />
 <div class="description">
   <div class="contextual">
   <%= link_to l(:button_quote), quoted_issue_path(@issue), :remote => true, :method => 'post', :class => 'icon icon-comment' if @issue.notes_addable? %>
@@ -142,8 +141,11 @@ end %>
   </div>
 </div>
 <% end %>
+<% if @issue.attachments.any? %>
+  <hr />
+  <p><strong><%=l(:label_attachment_plural)%></strong></p>
 <%= link_to_attachments @issue, :thumbnails => true %>
-<% end -%>
+<% end %>
 
 <%= render_full_width_custom_fields_rows(@issue) %>
 
@@ -171,6 +173,8 @@ end %>
 
 </div>
 
+<%= render partial: 'action_menu_edit' if User.current.wants_comments_in_reverse_order? %>
+
 <% if @changesets.present? %>
 <div id="issue-changesets">
 <h3><%=l(:label_associated_revisions)%></h3>
@@ -185,17 +189,7 @@ end %>
 </div>
 <% end %>
 
-
-<div style="clear: both;"></div>
-<%= render :partial => 'action_menu' %>
-
-<div style="clear: both;"></div>
-<% if @issue.editable? %>
-  <div id="update" style="display:none;">
-  <h3><%= l(:button_edit) %></h3>
-  <%= render :partial => 'edit' %>
-  </div>
-<% end %>
+<%= render partial: 'action_menu_edit' unless User.current.wants_comments_in_reverse_order? %>
 
 <% other_formats_links do |f| %>
   <%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
