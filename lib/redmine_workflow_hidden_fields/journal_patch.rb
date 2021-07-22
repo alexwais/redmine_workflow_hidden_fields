@@ -12,7 +12,7 @@ module RedmineWorkflowHiddenFields
 					end
 				end
 			else
-				true
+				super
 			end						
 		end
 	end
