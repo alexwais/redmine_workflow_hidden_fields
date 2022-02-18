@@ -1,10 +1,6 @@
 <%= render :partial => 'action_menu' %>
 
-<h2 class="inline-flex"><%= issue_heading(@issue) %></h2>
-<%= issue_status_type_badge(@issue.status) %>
-<% if @issue.is_private? %>
-  <span class="badge badge-private private"><%= l(:field_is_private) %></span>
-<% end %>
+<h2><%= issue_heading(@issue) %></h2>
 
 <div class="<%= @issue.css_classes %> details">
   <% if @prev_issue_id || @next_issue_id %>
@@ -30,8 +26,8 @@
   <% end %>
 
   <div class="gravatar-with-child">
-    <%= author_avatar(@issue.author, :size => "50") %>
-    <%= assignee_avatar(@issue.assigned_to, :size => "22", :class => "gravatar-child") if @issue.assigned_to %>
+    <%= avatar(@issue.author, :size => "50", :title => l(:field_author)) %>
+    <%= avatar(@issue.assigned_to, :size => "22", :class => "gravatar gravatar-child", :title => l(:field_assigned_to)) if @issue.assigned_to %>
   </div>
 
 <div class="subject">
@@ -148,7 +144,7 @@ end %>
 <% if @issue.attachments.any? %>
   <hr />
   <p><strong><%=l(:label_attachment_plural)%></strong></p>
-  <%= link_to_attachments @issue, :thumbnails => true %>
+<%= link_to_attachments @issue, :thumbnails => true %>
 <% end %>
 
 <%= render_full_width_custom_fields_rows(@issue) %>
@@ -161,10 +157,7 @@ end %>
 <div class="contextual">
   <%= link_to_new_subtask(@issue) if User.current.allowed_to?(:manage_subtasks, @project) %>
 </div>
-<p>
-  <strong><%=l(:label_subtask_plural)%></strong>
-  <%= render_descendants_stats(@issue) unless @issue.leaf? %>
-</p>
+<p><strong><%=l(:label_subtask_plural)%></strong></p>
 <%= form_tag({}, :data => {:cm_url => issues_context_menu_path}) do %>
 <%= render_descendants_tree(@issue) unless @issue.leaf? %>
 <% end %>
@@ -182,9 +175,19 @@ end %>
 
 <%= render partial: 'action_menu_edit' if User.current.wants_comments_in_reverse_order? %>
 
-<div id="history">
-<%= render_tabs issue_history_tabs, issue_history_default_tab %>
+<% if @changesets.present? %>
+<div id="issue-changesets">
+<h3><%=l(:label_associated_revisions)%></h3>
+<%= render :partial => 'changesets', :locals => { :changesets => @changesets} %>
 </div>
+<% end %>
+
+<% if @journals.present? %>
+<div id="history">
+<h3><%=l(:label_history)%></h3>
+<%= render :partial => 'history', :locals => { :issue => @issue, :journals => @journals } %>
+</div>
+<% end %>
 
 <%= render partial: 'action_menu_edit' unless User.current.wants_comments_in_reverse_order? %>
 
