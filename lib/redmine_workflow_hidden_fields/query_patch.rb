@@ -7,7 +7,7 @@ module RedmineWorkflowHiddenFields
 		
 		# Returns an array of columns that can be used to group the results
 		def groupable_columns
-			available_and_visible_columns.select {|c| c.groupable?}
+			available_and_visible_columns.select {|c| c.groupable}
 		end
 
 		# Returns a Hash of columns and the key for sorting
