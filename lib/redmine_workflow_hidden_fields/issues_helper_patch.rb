@@ -22,6 +22,8 @@ module RedmineWorkflowHiddenFields
 			items
 		end
 
+        MultipleValuesDetail = Struct.new(:property, :prop_key, :custom_field, :old_value, :value)
+
 		def details_to_strings(details, no_html=false, options={})	
 			options[:only_path] = (options[:only_path] == false ? false : true)
 			strings = []
@@ -46,6 +48,7 @@ module RedmineWorkflowHiddenFields
 			end
 			if values_by_field.present?
 				values_by_field.each do |field, changes|
+                # [Nomadia-changes] Added condition for hiding hidden fields, compared to the original function
 					unless details.first.journal.issue.hidden_attribute?(field.id.to_s, options[:user])						
 						if changes[:added].any?
 							detail = MultipleValuesDetail.new('cf', field.id.to_s, field)
