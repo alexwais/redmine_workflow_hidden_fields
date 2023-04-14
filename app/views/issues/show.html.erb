@@ -62,9 +62,9 @@
   end
   unless @issue.disabled_core_fields.include?('assigned_to_id') || @issue.hidden_attribute?('assigned_to_id')
     if i % 2 == 0
-    rows.left l(:field_assigned_to), (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+    rows.left l(:field_assigned_to), (@issue.assigned_to ? link_to_principal(@issue.assigned_to) : "-"), :class => 'assigned-to'
     else
-    rows.right l(:field_assigned_to), (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+    rows.right l(:field_assigned_to), (@issue.assigned_to ? link_to_principal(@issue.assigned_to) : "-"), :class => 'assigned-to'
     end
     i += 1
   end
@@ -96,9 +96,9 @@
   end
   unless @issue.disabled_core_fields.include?('due_date') || @issue.hidden_attribute?('due_date')
     if i % 2 == 0
-      rows.left l(:field_due_date), format_date(@issue.due_date), :class => 'due-date'
+      rows.left l(:field_due_date), issue_due_date_details(@issue), :class => 'due-date'
 	else
-    rows.right l(:field_due_date), format_date(@issue.due_date), :class => 'due-date'
+    rows.right l(:field_due_date), issue_due_date_details(@issue), :class => 'due-date'
 	end
 	i += 1
   end
@@ -119,13 +119,11 @@
     i += 1
   end
   if User.current.allowed_to?(:view_time_entries, @project) && @issue.total_spent_hours > 0
-    if @issue.total_spent_hours > 0
-        if i % 2 == 0
+    if i % 2 == 0
       rows.left l(:label_spent_time), issue_spent_hours_details(@issue), :class => 'spent-time'
 	else
       rows.right l(:label_spent_time), issue_spent_hours_details(@issue), :class => 'spent-time'
 	end
-    end	
   end
 end %>
 <%= render_half_width_custom_fields_rows(@issue) %>
@@ -158,16 +156,7 @@ end %>
 <% if !@issue.leaf? || User.current.allowed_to?(:manage_subtasks, @project) %>
 <hr />
 <div id="issue_tree">
-<div class="contextual">
-  <%= link_to_new_subtask(@issue) if User.current.allowed_to?(:manage_subtasks, @project) %>
-</div>
-<p>
-  <strong><%=l(:label_subtask_plural)%></strong>
-  <%= render_descendants_stats(@issue) unless @issue.leaf? %>
-</p>
-<%= form_tag({}, :data => {:cm_url => issues_context_menu_path}) do %>
-<%= render_descendants_tree(@issue) unless @issue.leaf? %>
-<% end %>
+<%= render :partial => 'subtasks' %>
 </div>
 <% end %>
 
@@ -189,7 +178,7 @@ end %>
 <%= render partial: 'action_menu_edit' unless User.current.wants_comments_in_reverse_order? %>
 
 <% other_formats_links do |f| %>
-  <%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+  <%= f.link_to 'Atom', :url => {:key => User.current.atom_key} %>
   <%= f.link_to 'PDF' %>
 <% end %>
 
@@ -207,7 +196,7 @@ end %>
 <% end %>
 
 <% content_for :header_tags do %>
-    <%= auto_discovery_link_tag(:atom, {:format => 'atom', :key => User.current.rss_key}, :title => "#{@issue.project} - #{@issue.tracker} ##{@issue.id}: #{@issue.subject}") %>
+    <%= auto_discovery_link_tag(:atom, {:format => 'atom', :key => User.current.atom_key}, :title => "#{@issue.project} - #{@issue.tracker} ##{@issue.id}: #{@issue.subject}") %>
 <% end %>
 
 <%= context_menu %>
